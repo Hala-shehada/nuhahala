@@ -1,11 +1,19 @@
-// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api
+
+
+
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+
 class VideoWidget extends StatefulWidget {
+  const VideoWidget({super.key});
+
+  
+
   @override
-  _VideoWidgetState createState() => _VideoWidgetState();
+  State<VideoWidget> createState() => _VideoWidgetState();
+ 
 }
 
 class _VideoWidgetState extends State<VideoWidget> {
@@ -19,7 +27,6 @@ class _VideoWidgetState extends State<VideoWidget> {
         _controller.setVolume(0.0);
         _controller.setLooping(true);
         _controller.play();
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
       });
   }

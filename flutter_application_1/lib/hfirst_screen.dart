@@ -1,23 +1,32 @@
 
+import 'dart:ui';
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/widgets/nav_bar.dart';
+import 'package:flutter_application_1/my_real.dart';
+import 'package:flutter_application_1/user_profile.dart';
+// import 'package:flutter_application_1/widgets/nav_bar.dart';
 //import 'package:semsarak/real_state.dart';
 import '../widgets/widgets.dart';
 import '../pallete.dart';
 
 
 
-class FirstScreen extends StatefulWidget {
- const FirstScreen({Key? key}) : super(key: key);
-   @override
 
-  // ignore: library_private_types_in_public_api
-  _FirstScreenState createState() => _FirstScreenState();
+class FirstScreen extends StatefulWidget {
+
+  final List firstlist;
+ const FirstScreen({Key? key, required this.firstlist}) : super(key: key);
+
+ @override
+  State<FirstScreen> createState() => _FirstScreenState();
+
 }
 
 
 class _FirstScreenState extends State<FirstScreen> {
-     
+  
+
   List<String> category = [
     'All',
     'Houses',
@@ -31,20 +40,20 @@ class _FirstScreenState extends State<FirstScreen> {
   ];
 
   var selectedIndex = 0;   
-   final List _citiesName =[
-      'Nablus',
-    'Hebron',
-    'Ramallah',
-    'Tulkarm',
-    'Jericho',
-    'Jenin',
-    'Bethlehem',
-    'Qalqilya',
+  //  final List _citiesName =[
+  //     'Nablus',
+  //   'Hebron',
+  //   'Ramallah',
+  //   'Tulkarm',
+  //   'Jericho',
+  //   'Jenin',
+  //   'Bethlehem',
+  //   'Qalqilya',
 
 
-   ];
+  //  ];
    
-     Object? _citiesVal;
+    //  Object? _citiesVal;
 
   tooggleIndex(value) {
     setState(() {
@@ -54,6 +63,7 @@ class _FirstScreenState extends State<FirstScreen> {
 
   @override
   Widget build(BuildContext context) {
+
      Size size = MediaQuery.of(context).size;
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
@@ -63,46 +73,157 @@ class _FirstScreenState extends State<FirstScreen> {
         child: Scaffold(
           
           backgroundColor: backGroundColor,
-           drawer:NavBar(
-           
-           ),
+           drawer: Drawer(
+             child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          
+          UserAccountsDrawerHeader(
+            accountName:  const Text("Semsarak", style:  pText,),
+             accountEmail:  const Text("", style:  pText2,),
+             currentAccountPicture: CircleAvatar(
+              child: ClipOval(
+                 child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX:3, sigmaY: 3),
+                          child: CircleAvatar(
+                            radius: size.width * 0.14,
+                           backgroundImage: const AssetImage("assets/images/pro.png"),
+                            
+                            backgroundColor: Colors.white,
+                        
+                          ),
+                        ),
+                ),
+             ),
+             decoration: const BoxDecoration(
+              color: primaryColor,
+             ),
+             
+             ),
+        ListTile(
+            leading: const Icon(Icons.person),
+            title: Text('Profile'.tr(),style:  pText1,),
+
+            onTap: () {
+                 Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => const Profile(firstlist: [],
+              
+                )));
+               
+               
+            },
+        ),
+      ListTile(
+          leading: const Icon(Icons.home),
+          title:  Text('Home'.tr(),style:   pText1,),
+
+          onTap: () {
+          Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => const FirstScreen(firstlist: [],
+              
+                )));
+          }
+        ),
+ ListTile(
+            leading: const Icon(Icons.real_estate_agent),
+            title:  Text('My Real Estates'.tr(),style:   pText1,),
+
+            onTap: () {
+                      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => const MyReal(firstlist: [],
+              
+                )));
+              
+            }
+        ),
+         ListTile(
+            leading: const Icon(Icons.chat_bubble),
+            title:  Text('Chat'.tr(),style:   pText1,),
+            
+
+            onTap: () {
+                      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => const Profile(firstlist: [],
+              
+                )));
+            }
+        ),
+         ListTile(
+            leading: const Icon(Icons.notifications),
+            title:  Text('Notifications'.tr(),style:   pText1,),
+            trailing: ClipOval(
+              child: Container(
+                color: Colors.red,
+                width: 22,
+                height: 22,
+                child: const Center(
+                  child: Text(
+                    '8',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14
+                    ),
+                  ),
+                ),
+
+            )),
+            onTap: () {
+                      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => const Profile(firstlist: [],
+              
+                )));
+            }
+        ),
+ ListTile(
+            leading: const Icon(Icons.swap_horizontal_circle),
+            title:  Text('Change Language'.tr(),style:   pText1,),
+            onTap: () {
+               if(context.locale.toString()=="en"){
+                  context.setLocale(const Locale('ar'));
+                 }else{
+                  context.setLocale(const Locale('en'));
+                 }
+                          
+            },
+        ),
+
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: Text('Logout'.tr(),style:  pText1,),
+
+            onTap: () {
+        //    Navigator.push(
+        // context,
+        // MaterialPageRoute(
+        //     builder: (_) => const LoginScreen(
+        //        firstlist: [],
+        //         )));
+
+
+               
+               
+            },
+        ),
+        ],
+      ),
+    
+              ),
            
           appBar: AppBar(
              backgroundColor:primaryColor ,
-                title: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                  children: [        
-                        Container(
-                          padding: const EdgeInsets.only(left:16.0,right:16.0),
-                       
-                      
-                     child:DropdownButton(
-                          hint: const Text('Select City'),
-                          dropdownColor: barColor,
-                          elevation: 5,
-                          icon: const Icon(Icons.arrow_drop_down),
-                          iconSize: 36.0,
-                          value:_citiesVal, 
-                          style:  bodyText,
-                          onChanged: (value){
-                            setState(() {
-                              _citiesVal=value;
-
-                            });
-                          },
-                          items: _citiesName.map((value){
-                            return DropdownMenuItem(
-                              value: value, 
-                              child: Text(value),);
-                          }).toList(),
-                          
-                          
-                          ),
-
-                        ),
-                 
-                      ],
-                    ),
+                 title: Text('Home page'.tr(), textAlign: TextAlign.center,style:textColor7,),
+               centerTitle: true,
+             
               
 
           ),
@@ -380,6 +501,15 @@ class _FirstScreenState extends State<FirstScreen> {
       ),
     );
   }
-  
-  
+   
+}
+enum DrawerSections {
+  profile,
+  home,
+  myReal,
+  chat,
+  notifications,
+  changeLang,
+  logout,
+
 }

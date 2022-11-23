@@ -5,8 +5,11 @@ import 'package:flutter_application_1/widgets/colors.dart';
 const TextStyle kBodyText =
  TextStyle(fontSize: 20, color: Colors.white, height: 1.5);
 
+ const TextStyle bodyText1 =TextStyle(fontSize: 16, color:Colors.black, height: 1.5,);
  const TextStyle bodyText =TextStyle(fontSize: 20, color: Colors.black, height: 1.5,);
 const TextStyle pText =TextStyle(fontSize: 20, color: Colors.black, height: 1.5,fontWeight: FontWeight.bold,);
+const TextStyle pText1 =TextStyle(fontSize: 18, color: Colors.black, height: 1.5,fontWeight: FontWeight.bold,);
+const TextStyle pText2 =TextStyle(fontSize: 16, color: Colors.black, height: 1,fontWeight: FontWeight.bold,);
 
 
 const Color kWhite = Colors.white;

@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api
+
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +7,20 @@ import 'login_screen.dart';
 import 'video_widget.dart';
  
 
-class SecondScreen extends StatelessWidget {
+class SecondScreen extends StatefulWidget {
+  const SecondScreen({super.key});
+
+  @override
+  State<SecondScreen> createState() => _SecondScreenState();
+}
+
+class _SecondScreenState extends State<SecondScreen> {
   @override
   Widget build(BuildContext context) {
     
     return Stack(
       children: <Widget>[
-        VideoWidget(),  
+        const VideoWidget(),  
           Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -54,8 +61,8 @@ class SecondScreen extends StatelessWidget {
                       width: double.maxFinite,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          // ignore: deprecated_member_use
-                          primary: Colors.black54,
+                         
+                          backgroundColor: Colors.black54,
                         ),
                         
                         onPressed: () {
@@ -64,7 +71,7 @@ class SecondScreen extends StatelessWidget {
                           }
                           Navigator.push(
                            context,
-                            MaterialPageRoute(builder: (context) => LoginScreen()),
+                            MaterialPageRoute(builder: (context) => const LoginScreen(firstlist: [],)),
                        );
                         },
                         child: const Text(
@@ -81,15 +88,15 @@ class SecondScreen extends StatelessWidget {
                   SizedBox(
                     width: double.maxFinite,
                     child: ElevatedButton(
-                      // ignore: deprecated_member_use
-                      style: ElevatedButton.styleFrom(primary: Colors.black54),
+                      
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.black54),
                       onPressed: () {
                          if(context.locale.toString()=="en"){
                             context.setLocale(const Locale('ar'));
                           }
                    Navigator.push(
                        context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    MaterialPageRoute(builder: (context) => const LoginScreen(firstlist: [],)),
   );
                       },
                       child: const Text(

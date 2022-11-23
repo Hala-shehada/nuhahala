@@ -5,11 +5,22 @@ import '../pallete.dart';
 import 'hfirst_screen.dart';
 import 'user_profile.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  final List firstlist;
+  const HomeScreen({Key? key, required this.firstlist}) : super(key: key);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
+  //    void initState() {
+  //  print(widget.firstlist[2]);
+  // super.initState();
+  // }
+
     // ignore: no_leading_underscores_for_local_identifiers
     PersistentTabController _controller;
 
@@ -17,14 +28,14 @@ class HomeScreen extends StatelessWidget {
     // ignore: no_leading_underscores_for_local_identifiers
     List<Widget> _buildScreens() {
       return [
-        const FirstScreen(),
-        const FirstScreen(),
-        const FirstScreen(),
-         Profile(),
+       FirstScreen(firstlist: [widget.firstlist[2]],),
+        const FirstScreen(firstlist: [],),
+        const FirstScreen(firstlist: [],),
+        Profile(firstlist: [widget.firstlist[2]],),
       ];
 
     }
-   
+    //  debugPrint(firstlist[2]);
 
     // ignore: no_leading_underscores_for_local_identifiers
     List<PersistentBottomNavBarItem> _navBarsItems() {

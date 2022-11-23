@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/widgets/colors.dart';
 import 'second_page.dart';
 
-// ignore: use_key_in_widget_constructors
+
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return  SplashState();
@@ -36,7 +38,7 @@ class SplashState extends State<SplashScreen> {
   }
 route() {
     Navigator.pushReplacement(context, MaterialPageRoute(
-        builder: (context) => SecondScreen()
+        builder: (context) => const SecondScreen()
       )
     ); 
   }
