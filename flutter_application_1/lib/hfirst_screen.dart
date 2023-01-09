@@ -1,59 +1,50 @@
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names
 
-import 'dart:ui';
+import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/my_real.dart';
-import 'package:flutter_application_1/user_profile.dart';
-// import 'package:flutter_application_1/widgets/nav_bar.dart';
-//import 'package:semsarak/real_state.dart';
+import 'package:flutter_application_1/filter.dart';
+import 'package:flutter_application_1/real_cat/real_apartment.dart';
+import 'package:flutter_application_1/real_cat/real_farm.dart';
+import 'package:flutter_application_1/real_cat/real_land.dart';
+import 'package:flutter_application_1/real_cat/real_office.dart';
+import 'package:flutter_application_1/real_cat/real_shop.dart';
+import 'package:flutter_application_1/real_cat/real_vialla.dart';
+import 'package:flutter_application_1/widgets/nav_bar.dart';
+import 'package:lottie/lottie.dart';
 import '../widgets/widgets.dart';
 import '../pallete.dart';
-
-
-
+import 'package:http/http.dart' as http;
 
 class FirstScreen extends StatefulWidget {
-
   final List firstlist;
- const FirstScreen({Key? key, required this.firstlist}) : super(key: key);
+  const FirstScreen({Key? key, required this.firstlist}) : super(key: key);
 
- @override
+  @override
   State<FirstScreen> createState() => _FirstScreenState();
-
 }
 
 
+var selectedCounrty;
+
 class _FirstScreenState extends State<FirstScreen> {
-  
+  //  List<Property> properties = getPropertyList();
+
+  var selectRentSale = "Rent";
 
   List<String> category = [
     'All',
-    'Houses',
     'Apartments',
     'Villas',
     'Offices',
     'Shops',
-    'Warehouses',
     'Land',
     'Farms',
+    'Price'
   ];
 
-  var selectedIndex = 0;   
-  //  final List _citiesName =[
-  //     'Nablus',
-  //   'Hebron',
-  //   'Ramallah',
-  //   'Tulkarm',
-  //   'Jericho',
-  //   'Jenin',
-  //   'Bethlehem',
-  //   'Qalqilya',
-
-
-  //  ];
-   
-    //  Object? _citiesVal;
+  var selectedIndex = 0;
 
   tooggleIndex(value) {
     setState(() {
@@ -61,448 +52,632 @@ class _FirstScreenState extends State<FirstScreen> {
     });
   }
 
+  Future getData() async {
+    var url = Uri.parse('http://192.168.1.104/gradpro/getdata.php');
+    var response = await http.post(url, body: {"myID": widget.firstlist[0]});
+    // ignore: unnecessary_new
+    final userdata = new Map<String, dynamic>.from(jsonDecode(response.body));
+    selectedCounrty = userdata['city'];
+  }
+
+  List postData = [];
+  Future showAllPost() async {
+    var url = Uri.parse("http://192.168.1.104/gradpro/allPost.php");
+    var response = await http.get(url, headers: {"Accept": "application/json"});
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      setState(() {
+        postData = jsonData;
+      });
+      // print(jsonData);
+      return jsonData;
+    }
+  }
+
+  Future showAllPost1() async {
+    var url = Uri.parse("http://192.168.1.104/gradpro/allApartmentPosts.php");
+    var response = await http.get(url, headers: {"Accept": "application/json"});
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      setState(() {
+        postData += jsonData;
+      });
+      // print(jsonData);
+
+    }
+  }
+
+  Future showAllPost2() async {
+    var url = Uri.parse("http://192.168.1.104/gradpro/allFarmPosts.php");
+    var response = await http.get(url, headers: {"Accept": "application/json"});
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      setState(() {
+        postData += jsonData;
+      });
+      // print(jsonData);
+
+    }
+  }
+
+  Future showAllPost3() async {
+    var url = Uri.parse("http://192.168.1.104/gradpro/allLandPosts.php");
+    var response = await http.get(url, headers: {"Accept": "application/json"});
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      setState(() {
+        postData += jsonData;
+      });
+      // print(jsonData);
+
+    }
+  }
+
+  Future showAllPost4() async {
+    var url = Uri.parse("http://192.168.1.104/gradpro/allOfficePosts.php");
+    var response = await http.get(url, headers: {"Accept": "application/json"});
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      setState(() {
+        postData += jsonData;
+      });
+      // print(jsonData);
+
+    }
+  }
+
+  Future showAllPost5() async {
+    var url = Uri.parse("http://192.168.1.104/gradpro/allShopPosts.php");
+    var response = await http.get(url, headers: {"Accept": "application/json"});
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      setState(() {
+        postData += jsonData;
+      });
+      // print(jsonData);
+
+    }
+  }
+
+  @override
+  void initState() {
+    getData();
+    showAllPost();
+    showAllPost1();
+    showAllPost2();
+    showAllPost3();
+    showAllPost4();
+    showAllPost5();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-
-     Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery.of(context).size;
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Container(
-      color: backGroundColor,
+      color: primaryColor,
       child: SafeArea(
         child: Scaffold(
-          
           backgroundColor: backGroundColor,
-           drawer: Drawer(
-             child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          
-          UserAccountsDrawerHeader(
-            accountName:  const Text("Semsarak", style:  pText,),
-             accountEmail:  const Text("", style:  pText2,),
-             currentAccountPicture: CircleAvatar(
-              child: ClipOval(
-                 child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX:3, sigmaY: 3),
-                          child: CircleAvatar(
-                            radius: size.width * 0.14,
-                           backgroundImage: const AssetImage("assets/images/pro.png"),
-                            
-                            backgroundColor: Colors.white,
-                        
-                          ),
-                        ),
-                ),
-             ),
-             decoration: const BoxDecoration(
-              color: primaryColor,
-             ),
-             
-             ),
-        ListTile(
-            leading: const Icon(Icons.person),
-            title: Text('Profile'.tr(),style:  pText1,),
-
-            onTap: () {
-                 Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => const Profile(firstlist: [],
-              
-                )));
-               
-               
-            },
-        ),
-      ListTile(
-          leading: const Icon(Icons.home),
-          title:  Text('Home'.tr(),style:   pText1,),
-
-          onTap: () {
-          Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => const FirstScreen(firstlist: [],
-              
-                )));
-          }
-        ),
- ListTile(
-            leading: const Icon(Icons.real_estate_agent),
-            title:  Text('My Real Estates'.tr(),style:   pText1,),
-
-            onTap: () {
-                      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => const MyReal(firstlist: [],
-              
-                )));
-              
-            }
-        ),
-         ListTile(
-            leading: const Icon(Icons.chat_bubble),
-            title:  Text('Chat'.tr(),style:   pText1,),
-            
-
-            onTap: () {
-                      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => const Profile(firstlist: [],
-              
-                )));
-            }
-        ),
-         ListTile(
-            leading: const Icon(Icons.notifications),
-            title:  Text('Notifications'.tr(),style:   pText1,),
-            trailing: ClipOval(
-              child: Container(
-                color: Colors.red,
-                width: 22,
-                height: 22,
-                child: const Center(
-                  child: Text(
-                    '8',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14
-                    ),
-                  ),
-                ),
-
-            )),
-            onTap: () {
-                      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => const Profile(firstlist: [],
-              
-                )));
-            }
-        ),
- ListTile(
-            leading: const Icon(Icons.swap_horizontal_circle),
-            title:  Text('Change Language'.tr(),style:   pText1,),
-            onTap: () {
-               if(context.locale.toString()=="en"){
-                  context.setLocale(const Locale('ar'));
-                 }else{
-                  context.setLocale(const Locale('en'));
-                 }
-                          
-            },
-        ),
-
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: Text('Logout'.tr(),style:  pText1,),
-
-            onTap: () {
-        //    Navigator.push(
-        // context,
-        // MaterialPageRoute(
-        //     builder: (_) => const LoginScreen(
-        //        firstlist: [],
-        //         )));
-
-
-               
-               
-            },
-        ),
-        ],
-      ),
-    
-              ),
-           
-          appBar: AppBar(
-             backgroundColor:primaryColor ,
-                 title: Text('Home page'.tr(), textAlign: TextAlign.center,style:textColor7,),
-               centerTitle: true,
-             
-              
-
+          drawer: NavBar(
+            firstlist: [widget.firstlist[0]],
           ),
-          
+          appBar: AppBar(
+            backgroundColor: primaryColor,
+            title: Text(
+              'Home page'.tr(),
+              textAlign: TextAlign.center,
+              style: textColor7,
+            ),
+            centerTitle: true,
+          ),
           body: Column(
-            
             children: [
-        
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: width * 0.03,
-                  vertical: height * 0.01,
+                  vertical: height * 0.015,
                 ),
-            
-              
               ),
               SizedBox(height: height * 0.01),
-              Container(
-                width: width * 0.9,
-                height: height * 0.065,
-                padding: EdgeInsets.symmetric(horizontal: width * 0.04),
-                child: const TextField(
-                  decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    hintText: 'Search Category, or near you',
-                    suffixIcon: Icon(
-                      Icons.search_outlined,
-                      color: Colors.grey,
-                    ),
-                    hintStyle: TextStyle(color: Colors.grey),
-                    contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none
-                    ),
-                  )
+              SizedBox(
+                height: size.height * .07,
+                child: ListView.separated(
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 10),
+                  itemCount: category.length,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.fromLTRB(16, 10, 10, 10),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        tooggleIndex(index);
+                        // print(index);
+                        if (index == 1) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => Apart(
+                                        firstlist: [widget.firstlist[0]],
+                                        selectedCounrty: selectedCounrty,
+                                      )));
+                        } else if (index == 2) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => Villa1(
+                                        firstlist: [widget.firstlist[0]],
+                                        selectedCounrty: selectedCounrty,
+                                      )));
+                        } else if (index == 3) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => Office1(
+                                      firstlist: [widget.firstlist[0]],
+                                      selectedCounrty: selectedCounrty)));
+                        } else if (index == 4) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => Shop1(
+                                      firstlist: [widget.firstlist[0]],
+                                      selectedCounrty: selectedCounrty)));
+                        } else if (index == 5) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => Land1(
+                                      firstlist: [widget.firstlist[0]],
+                                      selectedCounrty: selectedCounrty)));
+                        } else if (index == 6) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => Farm1(
+                                      firstlist: [widget.firstlist[0]],
+                                      selectedCounrty: selectedCounrty)));
+                        }
+
+                        //               else if(index == 0){
+
+                        //          Navigator.push(
+                        // context,
+                        // MaterialPageRoute(
+                        //     builder: (_) =>  FirstScreen(
+                        //         firstlist: [widget.firstlist[0]],
+                        //          )));
+
+                        //               }
+                        else if (index == 7) {
+                          _showBottomSheet();
+                        }
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 2.0),
+                          decoration: BoxDecoration(
+                            color: (selectedIndex == index)
+                                ? primaryColor
+                                : barColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Text(
+                              category[index],
+                              style: const TextStyle(
+                                color: textColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )),
+                    );
+                  },
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: height * 0.01),
-             child: SizedBox(
-              height: size.height * .07,
-              child: ListView.separated(
-                separatorBuilder: (context, index) => const SizedBox(width: 10),
-                itemCount: category.length,
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.fromLTRB(16, 10, 10, 10),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () => tooggleIndex(index),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 2.0),
-                      decoration: BoxDecoration(
-                        color: (selectedIndex == index) ? primaryColor : barColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          category[index],
-                          style: const TextStyle(
-                            color: textColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      )
-                    ),
-                  );
-                },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  locationDrop(),
+                  SizedBox(
+                    width: width * 0.01,
+                  ),
+                  rentSaleDrop(),
+                ],
               ),
-            ),
-)
-              // Container(
-              //   margin: EdgeInsets.symmetric(vertical: height * 0.04),
-              //   width: width,
-              //   height: height * 0.4,
-              //   child: ListView.builder(
-              //     scrollDirection: Axis.horizontal,
-              //     itemCount: RealModel.realModel.length,
-              //     itemBuilder: (context, index) {
-              //       return SizedBox(
-              //         width: width * 0.6,
-              //         child: Card(
-              //           margin: EdgeInsets.all(width * 0.03),
-              //           shadowColor: iconColor,
-              //           color: Colors.white,
-              //           elevation: 5,
-              //           shape: getShapeWidget(context, 0.03),
-              //           child: Column(
-              //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //             children: [
-              //               Expanded(
-              //                 flex: 2,
-              //                 child: Padding(
-              //                   padding: EdgeInsets.all(width * 0.01),
-              //                   child: ClipRRect(
-              //                     borderRadius:
-              //                         getBorderRadiusWidget(context, 0.04),
-              //                     child: Image.asset(
-              //                       RealModel.realModel[index].imagePath,
-              //                       fit: BoxFit.cover,
-              //                     ),
-              //                   ),
-              //                 ),
-              //               ),
-              //               SizedBox(height: height * 0.01),
-              //               Expanded(
-              //                 child: Padding(
-              //                   padding: EdgeInsets.symmetric(
-              //                       horizontal: width * 0.02),
-              //                   child: Column(
-              //                     mainAxisAlignment:
-              //                         MainAxisAlignment.spaceBetween,
-              //                     crossAxisAlignment: CrossAxisAlignment.start,
-              //                     children: [
-              //                       Text(
-              //                         RealModel.realModel[index].title,
-              //                         style: textColor4,
-              //                       ),
-              //                       Row(
-              //                         children: [
-              //                           Icon(
-              //                             Icons.location_on,
-              //                             color: iconColor,
-              //                             size: width * 0.05,
-              //                           ),
-              //                           Text(
-              //                             RealModel.realModel[index].location,
-              //                             style: textColor13,
-              //                           ),
-              //                         ],
-              //                       ),
-              //                       Row(
-              //                         mainAxisAlignment:
-              //                             MainAxisAlignment.spaceBetween,
-              //                         children: [
-              //                           Text(
-              //                             RealModel.realModel[index].price,
-              //                             style: textColor12,
-              //                           ),
-              //                           Container(
-              //                             padding: EdgeInsets.all(width * 0.01),
-              //                             decoration: BoxDecoration(
-              //                               color: Colors.redAccent,
-              //                               borderRadius: getBorderRadiusWidget(
-              //                                   context, 1),
-              //                             ),
-              //                             child: Icon(
-              //                               Icons.favorite,
-              //                               color: Colors.white,
-              //                               size: width * 0.04,
-              //                             ),
-              //                           ),
-              //                         ],
-              //                       ),
-              //                     ],
-              //                   ),
-              //                 ),
-              //               ),
-              //               SizedBox(height: height * 0.01),
-              //             ],
-              //           ),
-              //         ),
-              //       );
-              //     },
-              //   ),
-              // ),
-              // Padding(
-              //   padding: EdgeInsets.symmetric(horizontal: width * 0.03),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       Text(
-              //         'Recommended',
-              //         style: textColor2,
-              //       ),
-              //       Text(
-              //         'View all',
-              //         style: textColor4,
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              // SizedBox(height: height * 0.03),
-              // Padding(
-              //   padding: EdgeInsets.symmetric(horizontal: width * 0.03),
-              //   child: Card(
-              //     elevation: 5,
-              //     shadowColor: iconColor,
-              //     color: Colors.white,
-              //     shape: getShapeWidget(context, 0.04),
-              //     child: Padding(
-              //       padding: EdgeInsets.symmetric(
-              //         vertical: height * 0.02,
-              //         horizontal: width * 0.02,
-              //       ),
-              //       child: Row(
-              //         children: [
-              //           Expanded(
-              //             child: ClipRRect(
-              //               borderRadius: getBorderRadiusWidget(context, 0.03),
-              //               child: Image.asset(
-              //                 'pic4.jpg',
-              //                 fit: BoxFit.cover,
-              //               ),
-              //             ),
-              //           ),
-              //           SizedBox(width: width * 0.03),
-              //           Expanded(
-              //             flex: 2,
-              //             child: Column(
-              //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //                 Text(
-              //                   'Modern Farmhouse',
-              //                   style: textColor3,
-              //                 ),
-              //                 SizedBox(height: height * 0.01),
-              //                 Row(
-              //                   children: [
-              //                     Icon(
-              //                       Icons.location_on,
-              //                       color: iconColor,
-              //                       size: width * 0.04,
-              //                     ),
-              //                     const Text(
-              //                       'California',
-              //                       style: textColor13,
-              //                     ),
-              //                   ],
-              //                 ),
-              //                 SizedBox(height: height * 0.01),
-              //                 Row(
-              //                   mainAxisAlignment:
-              //                       MainAxisAlignment.spaceBetween,
-              //                   children: [
-              //                     const Text(
-              //                       '\$3,256,874',
-              //                       style: textColor12,
-              //                     ),
-              //                     Container(
-              //                       padding: EdgeInsets.all(width * 0.01),
-              //                       decoration: BoxDecoration(
-              //                         color: Colors.redAccent,
-              //                         borderRadius:
-              //                             getBorderRadiusWidget(context, 1),
-              //                       ),
-              //                       child: Icon(
-              //                         Icons.favorite,
-              //                         color: Colors.white,
-              //                         size: width * 0.04,
-              //                       ),
-              //                     )
-              //                   ],
-              //                 )
-              //               ],
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              // ),
+
+              SizedBox(height: height * 0.03),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: postData.isEmpty
+                      ? Lottie.asset('assets/animation/empty1.json')
+                      : ListView.builder(
+                          itemCount: postData.length,
+                          physics: const BouncingScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: ((context, index) {
+                            return NewPostItem6(
+                              location: postData[index]['location'],
+                              price: postData[index]['price'],
+                              rent_sale: postData[index]['rent_sale'],
+                              space: postData[index]['space'],
+                              real_name: postData[index]['real_name'],
+                              city: postData[index]['city'],
+                              image:
+                                  'http://192.168.1.104/gradpro/img/${postData[index]['image']}',
+                              rating: postData[index]['rating'],
+                            );
+                          })),
+                ),
+              ),
             ],
           ),
-
         ),
       ),
     );
   }
-   
+
+  
+
+
+  void _showBottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+        ),
+        builder: (BuildContext context) {
+          return Wrap(
+            children: const [
+              Filter(),
+            ],
+          );
+        });
+  }
+
+  Widget locationDrop() {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      padding: const EdgeInsets.only(left: 24),
+      height: size.height * 0.04,
+      width: size.width * 0.48,
+      decoration: BoxDecoration(
+        color: barColor,
+        borderRadius: BorderRadius.circular(2),
+      ),
+      child: Center(
+        child: DropdownButton(
+          icon: const Icon(
+            Icons.arrow_drop_down,
+            color: textColor,
+            size: 30,
+          ),
+          hint: const Text("Select City", style: bodyText11),
+          dropdownColor: barColor,
+          underline: const Divider(
+            thickness: 0,
+          ),
+          isExpanded: true,
+          items: [
+            'Nablus',
+            'Hebron',
+            'Ramallah',
+            'Tulkarm',
+            'Jericho',
+            'Jenin',
+            'Bethlehem',
+            'Qalqilya',
+          ]
+              .map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(
+                      e,
+                      style: bodyText11,
+                    ),
+                  ))
+              .toList(),
+          onChanged: (val) {
+            setState(() {
+              selectedCounrty = val;
+              //textfieldsStrings2[2] = val;
+            });
+          },
+          value: selectedCounrty,
+        ),
+      ),
+    );
+  }
+
+  Widget rentSaleDrop() {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      padding: const EdgeInsets.only(left: 24),
+      height: size.height * 0.04,
+      width: size.width * 0.48,
+      decoration: BoxDecoration(
+        color: barColor,
+        borderRadius: BorderRadius.circular(2),
+      ),
+      child: Center(
+        child: DropdownButton(
+          icon: const Icon(
+            Icons.arrow_drop_down,
+            color: textColor,
+            size: 30,
+          ),
+
+          // hint:const Text("Select City",style: bodyText11),
+          dropdownColor: barColor,
+          underline: const Divider(
+            thickness: 0,
+          ),
+          isExpanded: true,
+
+          items: [
+            'Rent',
+            'Sale',
+          ]
+              .map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(
+                      e,
+                      style: bodyText11,
+                    ),
+                  ))
+              .toList(),
+          onChanged: (val) {
+            setState(() {
+              selectRentSale = val!;
+              //textfieldsStrings2[2] = val;
+            });
+          },
+
+          value: selectRentSale,
+        ),
+      ),
+    );
+  }
 }
+
+class NewPostItem6 extends StatefulWidget {
+  final rating;
+  final image;
+  final location;
+  final city;
+  final price;
+  final rent_sale;
+  final space;
+  final real_name;
+ 
+
+  const NewPostItem6({
+    Key? key,
+    required this.image,
+    required this.location,
+    required this.city,
+    required this.price,
+    required this.rent_sale,
+    required this.space,
+    required this.real_name,
+    this.rating,
+  }) : super(key: key);
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _NewPostItem6State createState() => _NewPostItem6State();
+}
+
+class _NewPostItem6State extends State<NewPostItem6> {
+  
+
+  @override
+  void initState() {
+   
+    // print(widget.cat_type1);
+    // print( widget.location + widget.price+ widget.rent_sale+widget.space+widget.beadroom+"widget.bathroom +widget.hall+widget.real_name+widget.city+widget.user_id +widget.image");
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 24),
+      clipBehavior: Clip.antiAlias,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(15),
+        ),
+      ),
+      child: Container(
+        height: 230,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(widget.image),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.black.withOpacity(0.7),
+              ],
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.yellow[700],
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(5),
+                  ),
+                ),
+                width: 80,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 4,
+                ),
+                child: Center(
+                  child: Text(
+                    "FOR ${widget.rent_sale}",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(),
+              ),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        widget.real_name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        r"₪" + widget.price,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            widget.city + " - " + widget.location,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.zoom_out_map,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            "${widget.space} sq/m",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star,
+                            color: Colors.yellow[700],
+                            size: 14,
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            "${widget.rating} Rating",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  InkWell(
+                    child: const Text(
+                      "Read more",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    onTap: () {
+                      
+                    },
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      // ),
+    );
+  }
+}
+
 enum DrawerSections {
   profile,
   home,
@@ -511,5 +686,4 @@ enum DrawerSections {
   notifications,
   changeLang,
   logout,
-
 }

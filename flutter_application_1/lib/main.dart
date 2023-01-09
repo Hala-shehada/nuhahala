@@ -1,21 +1,27 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/user_profile.dart';
+import 'package:flutter_application_1/chat_screen.dart';
+import 'package:flutter_application_1/registration_screen.dart';
+import 'package:flutter_application_1/signin_screen.dart';
+import 'package:flutter_application_1/welcomescreen.dart';
 import 'first_page.dart';
 import 'screens.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 
 void main() async {
-  
-    WidgetsFlutterBinding.ensureInitialized();
+
+WidgetsFlutterBinding.ensureInitialized();
+   await Firebase.initializeApp(); 
   await EasyLocalization.ensureInitialized();
    runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('ar')],
       path: 'assets/langs',
       fallbackLocale: const Locale('en'),
-      child: MyApp()
+     child: MyApp(),
+    
     ),
   );
 }
@@ -38,14 +44,20 @@ class _MyAppState extends State<MyApp> {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-       initialRoute:'homeScreen',
+       initialRoute:
+        WelcomeScreen.screenRoute,
+      //  'homeScreen',
       routes: {
         'homeScreen' : (context) =>const SplashScreen(),
         'LoginScreen': (context) => const LoginScreen(firstlist: [],),
-        'ForgotPassword': (context) => ForgotPassword(),
+        'ForgotPassword': (context) => const ForgotPassword(),
         'CreateNewAccount': (context) =>  const CreateNewAccount(firstlist: [],),
         'HomeScreen' :  (context) => const HomeScreen(firstlist: [],),
-        'Profile': (context) =>const Profile(firstlist: [],)
+        WelcomeScreen.screenRoute: (context) => WelcomeScreen(),
+        SignInScreen.screenRoute: (context) => SignInScreen(),
+        RegistrationScreen.screenRoute: (context) => RegistrationScreen(),
+        ChatScreen.screenRoute: (context) => ChatScreen(),
+       
       },
     debugShowCheckedModeBanner: false,
     );

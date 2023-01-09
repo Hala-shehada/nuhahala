@@ -205,12 +205,13 @@ var result = await httpPost("create-user", {
     'Bethlehem',
     'Qalqilya',             ].map((e) => DropdownMenuItem(
                         value: e,
-                        child: Text(e,style:  kBodyText,),))
+                        child: Text(e,style:bodyText1,),))
                           .toList(),
                       onChanged:(val) {
                       setState(() {
                         selectedCounrty=val;
                         textfieldsStrings2[2] = val;
+                        
 
                       });
                             },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/favorite.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../widgets/widgets.dart';
 import '../pallete.dart';
@@ -29,8 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
     List<Widget> _buildScreens() {
       return [
        FirstScreen(firstlist: [widget.firstlist[2]],),
-        const FirstScreen(firstlist: [],),
-        const FirstScreen(firstlist: [],),
+       Fav(firstlist: [widget.firstlist[2]],),
+       FirstScreen(firstlist: [widget.firstlist[2]],),
         Profile(firstlist: [widget.firstlist[2]],),
       ];
 
@@ -56,8 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
        
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.search),
-          title: ("Search"),
+          icon: const Icon(Icons.star),
+          title: ("Most rated"),
           textStyle: textColor12,
           activeColorPrimary: primaryColor,
           inactiveColorPrimary: iconColor,

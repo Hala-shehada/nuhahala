@@ -8,8 +8,10 @@ import 'package:flutter_application_1/categoriesDetailes/land.dart';
 import 'package:flutter_application_1/categoriesDetailes/office.dart';
 import 'package:flutter_application_1/categoriesDetailes/shop.dart';
 import 'package:flutter_application_1/categoriesDetailes/villa.dart';
+import 'package:flutter_application_1/my_map.dart';
 
 import 'package:flutter_application_1/pallete.dart';
+import 'package:flutter_application_1/upload.dart';
 import 'package:flutter_application_1/widgets/colors.dart';
 
 import 'categoriesDetailes/apartment.dart';
@@ -36,6 +38,7 @@ class _MyRealState1 extends State<MyReal1> {
    void initState() {
    super.initState();
    cat=Categories.getCategories();
+   
  
   }
 
@@ -59,7 +62,7 @@ class _MyRealState1 extends State<MyReal1> {
                    Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => const Apartment(firstlist: [],
+            builder: (_) =>  Apartment(firstlist: [widget.firstlist[0]], position:[position[0],position[1]], img: [images],
               
                 )));
 
@@ -67,7 +70,7 @@ class _MyRealState1 extends State<MyReal1> {
                    Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => const Villa(firstlist: [],
+            builder: (_) =>  Villa(firstlist: [widget.firstlist[0]], position:[position[0],position[1]],img: [images]
               
                 )));
 
@@ -76,7 +79,7 @@ class _MyRealState1 extends State<MyReal1> {
                    Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => const Office(firstlist: [],
+            builder: (_) =>  Office(firstlist: [widget.firstlist[0]], position:[position[0],position[1]],img: [images]
               
                 )));
 
@@ -84,7 +87,7 @@ class _MyRealState1 extends State<MyReal1> {
                    Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => const Shop(firstlist: [],
+            builder: (_) =>  Shop(firstlist: [widget.firstlist[0]], position:[position[0],position[1]],img: [images]
               
                 )));
 
@@ -92,7 +95,7 @@ class _MyRealState1 extends State<MyReal1> {
                    Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => const Land(firstlist: [],
+            builder: (_) =>  Land(firstlist: [widget.firstlist[0]], position:[position[0],position[1]],img: [images]
               
                 )));
 
@@ -100,7 +103,7 @@ class _MyRealState1 extends State<MyReal1> {
                    Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => const Farm(firstlist: [],
+            builder: (_) =>  Farm(firstlist: [widget.firstlist[0]], position:[position[0],position[1]],img: [images]
               
                 )));
 
@@ -122,7 +125,7 @@ class _MyRealState1 extends State<MyReal1> {
     // final width = MediaQuery.of(context).size.width;
     // final height = MediaQuery.of(context).size.height;
     return Container(
-      color: backGroundColor,
+      color: primaryColor,
       child: SafeArea(
         child: Scaffold(
               

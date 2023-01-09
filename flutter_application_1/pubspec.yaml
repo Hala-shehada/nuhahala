@@ -51,6 +51,31 @@ dependencies:
   dio: ^4.0.6
   http_parser: ^4.0.2
   flutter_easyloading: ^3.0.5
+  flutter_rating_bar: ^4.0.1
+  url_launcher: ^6.1.7
+  google_maps_flutter: ^2.2.1
+  get: ^4.6.5
+  geolocator: ^9.0.2
+  geocoding: ^2.0.5
+  flutter_typeahead: ^4.1.1
+  flutter_google_places: ^0.3.0
+  fluttertoast:
+  mailer:
+  intl:
+  lottie:
+  flutter_local_notifications: ^9.6.0  
+  timezone: 
+  rxdart: 
+  badges:
+  modal_progress_hud_nsn: 
+  firebase_core: ^2.4.1
+  firebase_auth: ^4.2.5
+  cloud_firestore: ^4.3.1 
+  
+
+  
+
+
   
 
 
@@ -85,6 +110,8 @@ flutter:
     - assets/images/
     - assets/videos/
     - assets/langs/
+    - assets/animation/
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

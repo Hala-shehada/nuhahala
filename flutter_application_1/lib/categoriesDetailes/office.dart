@@ -1,322 +1,221 @@
+import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/my_map.dart';
+import 'package:flutter_application_1/my_real.dart';
 import 'package:flutter_application_1/pallete.dart';
 import 'package:flutter_application_1/widgets/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../upload.dart';
 
-
-
-
-
-
-
-
 class Office extends StatefulWidget {
   final List firstlist;
-  const Office({Key? key, required this.firstlist}) : super(key: key);
+  final List position;
+  final List img;
+  const Office(
+      {Key? key,
+      required this.firstlist,
+      required this.position,
+      required this.img})
+      : super(key: key);
 
   @override
   State<Office> createState() => _OfficeState();
 }
 
-
 class _OfficeState extends State<Office> {
-
   int? selectedRadioTile;
-   // ignore: prefer_typing_uninitialized_variables
-   var selectedCounrty;
-
-final GlobalKey<FormState> pricekey =GlobalKey();
-final GlobalKey<FormState> spacekey =GlobalKey();
-final GlobalKey<FormState> roomkey =GlobalKey();
-final GlobalKey<FormState> hallkey =GlobalKey();
-final GlobalKey<FormState> floorkey =GlobalKey();
-final GlobalKey<FormState> addkey =GlobalKey();
-final GlobalKey<FormState> mapkey =GlobalKey();
- List textfieldsStrings2 = [
+  // ignore: prefer_typing_uninitialized_variables
+  var selectedCounrty;
+  Dio dio = Dio();
+  final GlobalKey<FormState> pricekey = GlobalKey();
+  final GlobalKey<FormState> spacekey = GlobalKey();
+  final GlobalKey<FormState> roomkey = GlobalKey();
+  final GlobalKey<FormState> hallkey = GlobalKey();
+  final GlobalKey<FormState> floorkey = GlobalKey();
+  final GlobalKey<FormState> addkey = GlobalKey();
+  final GlobalKey<FormState> namekey = GlobalKey();
+  List textfieldsStrings2 = [
     "", //price
-    "", //city 
+    "", //city
     "", //space
-    "",//room
-    "",//hall
-    "",//floor
+    "", //room
+    "", //hall
+    "", //floor
     "", //add
     "", //map
+    "", //name
+    "", //sale/rent
   ];
+  final List num = ["3"];
 
-@override
-void initState() {
-super.initState();
-selectedRadioTile = 0;
-}
+  @override
+  void initState() {
+    super.initState();
+    selectedRadioTile = 0;
+  }
 
-setSelectedRadioTile(int val) {
-setState(() {
-selectedRadioTile = val;
-});
-}
-  
+  setSelectedRadioTile(int val) {
+    setState(() {
+      selectedRadioTile = val;
+    });
+  }
+
+  _save() async {
+    // ignore: unnecessary_null_comparison
+    if (images != null) {
+      for (var i = 0; i < images.length; i++) {
+        ByteData byteData = await images[i].getByteData();
+        List<int> imageData = byteData.buffer.asUint8List();
+
+        MultipartFile multipartFile = MultipartFile.fromBytes(
+          imageData,
+          filename: images[i].name,
+          contentType: MediaType('image', 'jpg'),
+        );
+        //  log(images[i].name.toString());
+
+        FormData formData = FormData.fromMap({
+          "image": multipartFile,
+          "user_id": widget.firstlist[0],
+          "city": textfieldsStrings2[1],
+          "real_name": textfieldsStrings2[8],
+          "price": textfieldsStrings2[0],
+          "map1": widget.position[0],
+          "map2": widget.position[1],
+          "rent_sale": textfieldsStrings2[9],
+          "space": textfieldsStrings2[2],
+          "room": textfieldsStrings2[3],
+          "floor": textfieldsStrings2[5],
+          "hall": textfieldsStrings2[4],
+          'location': textfieldsStrings2[6]
+        });
+        var response = await dio.post(
+            'http://192.168.1.104/gradpro/office_post.php',
+            data: formData);
+        if (response.statusCode == 200) {
+          //  log(response.data);
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Container(
-      color: backGroundColor,
+      color: primaryColor,
       child: SafeArea(
         child: Scaffold(
-              
-            appBar: AppBar(
-             backgroundColor:primaryColor ,
-                title: Text('Add Real Estates'.tr(), textAlign: TextAlign.center,style:textColor7,),
-               centerTitle: true,
-           
-               
+          appBar: AppBar(
+            backgroundColor: primaryColor,
+            title: Text(
+              'Add Real Estates'.tr(),
+              textAlign: TextAlign.center,
+              style: textColor7,
             ),
-
-  body: ListView(
-     scrollDirection: Axis.vertical,
-         
+            centerTitle: true,
+          ),
+          body: ListView(
+            scrollDirection: Axis.vertical,
             children: [
-        
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: width * 0.03,
                   vertical: height * 0.004,
-                  
                 ),
-                
-            
               ),
               SizedBox(height: height * 0.02),
-
               Container(
-                   
-       
-
-                  padding: EdgeInsets.symmetric(horizontal: width * 0.3),
-                    height: 130,
-                    width: 180,
-            
-            
-                     // child: InkWell(
-                        child: Container(
-                           
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                          ),
-                                                       child: InkWell(
-                                onTap: (){
-                                         Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => const Upload(firstlist: [],
-              
-                )));
-
-                                },
-                            
-                             child: const Icon(
-                               Icons.add_a_photo,
-                                color: primaryColor,
-                                size: 35.0,
-
-                            ),
-                              ),
-                          //child:const Icon(Icons.add_a_photo,color:primaryColor,size: 35,),
-                          // child: const Align(alignment: Alignment(0.1,0.1),child: Text("Add image",style: bodyText1,),),
-                          
-                        ),
-                      
-                     
+                padding: EdgeInsets.symmetric(horizontal: width * 0.3),
+                height: 130,
+                width: 180,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => Upload(
+                                  firstlist: [widget.firstlist[0]],
+                                  num: [num[0]])));
+                    },
+                    child: const Icon(
+                      Icons.add_a_photo,
+                      color: primaryColor,
+                      size: 35.0,
                     ),
-             
-                 
-             
+                  ),
+                ),
+              ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: height * 0.001),
-             child: SizedBox(
-             // height: size.height ,
-              child: Column(
-               
-                children: <Widget>[
-                  ButtonBar(
-                   alignment: MainAxisAlignment.center,
-                    children:<Widget>[
-                      Radio(
-                         activeColor: Colors.amber,
-                        value: 1,
-                         groupValue: selectedRadioTile,
-                          onChanged: (val){
-                            setSelectedRadioTile(val!);
-                          //  print(val);
-
-                          },
-                        
+                child: SizedBox(
+                  child: Column(
+                    children: <Widget>[
+                      ButtonBar(
+                        alignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Radio(
+                            activeColor: Colors.amber,
+                            value: 1,
+                            groupValue: selectedRadioTile,
+                            onChanged: (val) {
+                              setSelectedRadioTile(val!);
+                              textfieldsStrings2[9] = "SALE";
+                              //  print(val);
+                            },
                           ),
-                           Text("Sale".tr(),style: pText2),
-                            SizedBox(width: width * 0.09),
-                            Radio(
-                              activeColor: Colors.amber,
-                        value: 2,
-                         groupValue: selectedRadioTile,
-                          onChanged: (val){
-                            setSelectedRadioTile(val!);
-                          //  print(val);
-
-                          },
-                        
+                          Text("Sale".tr(), style: pText2),
+                          SizedBox(width: width * 0.09),
+                          Radio(
+                            activeColor: Colors.amber,
+                            value: 2,
+                            groupValue: selectedRadioTile,
+                            onChanged: (val) {
+                              setSelectedRadioTile(val!);
+                              textfieldsStrings2[9] = "RENT";
+                              //  print(val);
+                            },
                           ),
-                            Text("Rent".tr(),style: pText2),
+                          Text("Rent".tr(), style: pText2),
+                        ],
+                      ),
+                      SizedBox(height: height * 0.001),
+                      nameTextField(),
+                      priceTextField(),
+                      locationDrop(),
+                      spaceTextField(),
+                      roomTextField(),
+                      hallTextField(),
+                      floorTextField(),
+                      addTextField(),
+                      mapTextField(),
+                      SizedBox(height: height * 0.02),
+                      roundedButton(),
 
-                           
-
-                           
-
+                      const SizedBox(height: 200,),
                     ],
                   ),
-              SizedBox(height: height * 0.001),
-                priceTextField(),
-                 locationDrop(),
-                 spaceTextField(),
-                 roomTextField(),
-                 hallTextField(),
-                 floorTextField(),
-                 addTextField(),
-                  mapTextField(),
-                   SizedBox(height: height * 0.02),
-                  roundedButton()
-                 
-
-
-                ],
-
-                
+                ),
               ),
-            ),
-            
-),
-
-            
-
-  
-      ],
+            ],
           ),
-
         ),
       ),
     );
   }
 
-  Widget priceTextField(){
-  Size size = MediaQuery.of(context).size;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Container(
-        height: size.height * 0.05,
-        width: size.width * 0.8,
-        decoration: BoxDecoration(
-          color: Colors.grey[300]!.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(9),
-        ),
-        child: Form(
-           key:pricekey,
-        child: Center(
-          child: TextFormField(
-               onChanged: (value) {
-              setState(() {
-                 textfieldsStrings2[0]= value;
-              });
-
-              
-            },
-
-                validator: (value) {
-                         if (value!.isEmpty) {
-                            buildSnackError(
-                              'Required'.tr(),
-                              context,
-                              size,
-                            );
-                            return '';
-                          }
-                          return null;
-                      },
-            
-               decoration: InputDecoration(
-               contentPadding: const EdgeInsets.all(6),
-              hintText: 'Price'.tr(),
-              hintStyle:pText1,
-            ),
-             
-            style: pText1,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.next,
-          ),
-        ),
-      ),
-      ),
-    );
-}
-
- Widget roomTextField(){
-  Size size = MediaQuery.of(context).size;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Container(
-        height: size.height * 0.05,
-        width: size.width * 0.8,
-        decoration: BoxDecoration(
-          color: Colors.grey[300]!.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(9),
-        ),
-        child: Form(
-           key:roomkey,
-        child: Center(
-          child: TextFormField(
-               onChanged: (value) {
-              setState(() {
-                 textfieldsStrings2[3]= value;
-              });
-
-              
-            },
-
-                validator: (value) {
-                         if (value!.isEmpty) {
-                            buildSnackError(
-                              'Required'.tr(),
-                              context,
-                              size,
-                            );
-                            return '';
-                          }
-                          return null;
-                      },
-            
-               decoration: InputDecoration(
-               contentPadding: const EdgeInsets.all(6),
-              hintText: 'Rooms'.tr(),
-              hintStyle:pText1,
-            ),
-             
-            style: pText1,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.next,
-          ),
-        ),
-      ),
-      ),
-    );
-}
-
-
- Widget hallTextField(){
-  Size size = MediaQuery.of(context).size;
+  Widget nameTextField() {
+    Size size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -327,49 +226,44 @@ selectedRadioTile = val;
           borderRadius: BorderRadius.circular(9),
         ),
         child: Form(
-           key:hallkey,
-        child: Center(
-          child: TextFormField(
-               onChanged: (value) {
-              setState(() {
-                 textfieldsStrings2[4]= value;
-              });
-
-              
-            },
-
-                validator: (value) {
-                         if (value!.isEmpty) {
-                            buildSnackError(
-                              'Required'.tr(),
-                              context,
-                              size,
-                            );
-                            return '';
-                          }
-                          return null;
-                      },
-            
-               decoration: InputDecoration(
-               contentPadding: const EdgeInsets.all(6),
-              hintText: 'Halls'.tr(),
-              hintStyle:pText1,
+          key: namekey,
+          child: Center(
+            child: TextFormField(
+              onChanged: (value) {
+                setState(() {
+                  textfieldsStrings2[8] = value;
+                });
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  buildSnackError(
+                    'Required'.tr(),
+                    context,
+                    size,
+                  );
+                  return '';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(6),
+                hintText: 'Real Name'.tr(),
+                hintStyle: pText1,
+              ),
+              style: pText1,
+              keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.next,
             ),
-             
-            style: pText1,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.next,
           ),
         ),
       ),
-      ),
     );
-}
+  }
 
- Widget floorTextField(){
-  Size size = MediaQuery.of(context).size;
+  Widget priceTextField() {
+    Size size = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical:4.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Container(
         height: size.height * 0.05,
         width: size.width * 0.8,
@@ -378,120 +272,238 @@ selectedRadioTile = val;
           borderRadius: BorderRadius.circular(9),
         ),
         child: Form(
-           key:floorkey,
-        child: Center(
-          child: TextFormField(
-               onChanged: (value) {
-              setState(() {
-                 textfieldsStrings2[5]= value;
-              });
-
-              
-            },
-
-                validator: (value) {
-                         if (value!.isEmpty) {
-                            buildSnackError(
-                              'Required'.tr(),
-                              context,
-                              size,
-                            );
-                            return '';
-                          }
-                          return null;
-                      },
-            
-               decoration: InputDecoration(
-               contentPadding: const EdgeInsets.all(6),
-              hintText: 'Floor'.tr(),
-              hintStyle:pText1,
+          key: pricekey,
+          child: Center(
+            child: TextFormField(
+              onChanged: (value) {
+                setState(() {
+                  textfieldsStrings2[0] = value;
+                });
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  buildSnackError(
+                    'Required'.tr(),
+                    context,
+                    size,
+                  );
+                  return '';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(6),
+                hintText: 'Price'.tr(),
+                hintStyle: pText1,
+              ),
+              style: pText1,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.next,
             ),
-             
-            style: pText1,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.next,
           ),
         ),
       ),
+    );
+  }
+
+  Widget roomTextField() {
+    Size size = MediaQuery.of(context).size;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Container(
+        height: size.height * 0.05,
+        width: size.width * 0.8,
+        decoration: BoxDecoration(
+          color: Colors.grey[300]!.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(9),
+        ),
+        child: Form(
+          key: roomkey,
+          child: Center(
+            child: TextFormField(
+              onChanged: (value) {
+                setState(() {
+                  textfieldsStrings2[3] = value;
+                });
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  buildSnackError(
+                    'Required'.tr(),
+                    context,
+                    size,
+                  );
+                  return '';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(6),
+                hintText: 'Rooms'.tr(),
+                hintStyle: pText1,
+              ),
+              style: pText1,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.next,
+            ),
+          ),
+        ),
       ),
     );
-}
+  }
 
+  Widget hallTextField() {
+    Size size = MediaQuery.of(context).size;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        height: size.height * 0.05,
+        width: size.width * 0.8,
+        decoration: BoxDecoration(
+          color: Colors.grey[300]!.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(9),
+        ),
+        child: Form(
+          key: hallkey,
+          child: Center(
+            child: TextFormField(
+              onChanged: (value) {
+                setState(() {
+                  textfieldsStrings2[4] = value;
+                });
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  buildSnackError(
+                    'Required'.tr(),
+                    context,
+                    size,
+                  );
+                  return '';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(6),
+                hintText: 'Halls'.tr(),
+                hintStyle: pText1,
+              ),
+              style: pText1,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.next,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
+  Widget floorTextField() {
+    Size size = MediaQuery.of(context).size;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Container(
+        height: size.height * 0.05,
+        width: size.width * 0.8,
+        decoration: BoxDecoration(
+          color: Colors.grey[300]!.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(9),
+        ),
+        child: Form(
+          key: floorkey,
+          child: Center(
+            child: TextFormField(
+              onChanged: (value) {
+                setState(() {
+                  textfieldsStrings2[5] = value;
+                });
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  buildSnackError(
+                    'Required'.tr(),
+                    context,
+                    size,
+                  );
+                  return '';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(6),
+                hintText: 'Floor'.tr(),
+                hintStyle: pText1,
+              ),
+              style: pText1,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.next,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-
- Widget locationDrop(){
-  Size size = MediaQuery.of(context).size;
+  Widget locationDrop() {
+    Size size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Container(
-        
-       
-      padding: const EdgeInsets.only(left: 10),
+        padding: const EdgeInsets.only(left: 10),
         height: size.height * 0.05,
         width: size.width * 0.8,
         decoration: BoxDecoration(
           color: Colors.grey[300]!.withOpacity(0.5),
           borderRadius: BorderRadius.circular(9),
         ),
-        
-        
         child: Center(
-      
-           child: DropdownButton(
-            
-                 
-                      icon:const Icon(Icons.arrow_drop_down,
-                        color: textColor,
-                       size: 36,
-                      
-                       
+          child: DropdownButton(
+            icon: const Icon(
+              Icons.arrow_drop_down,
+              color: textColor,
+              size: 36,
+            ),
+            hint: Text("Select City".tr(), style: pText1),
+            dropdownColor: barColor,
+            underline: const Divider(
+              thickness: 0,
+            ),
+            isExpanded: true,
+            items: [
+              'Nablus',
+              'Hebron',
+              'Ramallah',
+              'Tulkarm',
+              'Jericho',
+              'Jenin',
+              'Bethlehem',
+              'Qalqilya',
+            ]
+                .map((e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(
+                        e,
+                        style: pText1,
                       ),
-                      
-                      
-                    
-                        hint:Text("Select City".tr(),style: pText1),
-                      dropdownColor: barColor,
-                    underline:const Divider(thickness: 0,) ,
-                    isExpanded: true,
-                    
-                     items: [      'Nablus',
-    'Hebron',
-    'Ramallah',
-    'Tulkarm',
-    'Jericho',
-    'Jenin',
-    'Bethlehem',
-    'Qalqilya',             ].map((e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(e,style: pText1,),))
-                          .toList(),
-                      onChanged:(val) {
-                      setState(() {
-                        selectedCounrty=val;
-                        textfieldsStrings2[1] = val;
-
-                      });
-                            },
-                            
-
-  value: selectedCounrty,
-  
- 
-
+                    ))
+                .toList(),
+            onChanged: (val) {
+              setState(() {
+                selectedCounrty = val;
+                textfieldsStrings2[1] = val;
+              });
+            },
+            value: selectedCounrty,
+          ),
         ),
-        
       ),
-      
-      ),
-      
     );
-}
+  }
 
- Widget spaceTextField(){
-  Size size = MediaQuery.of(context).size;
+  Widget spaceTextField() {
+    Size size = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical:8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         height: size.height * 0.05,
         width: size.width * 0.8,
@@ -500,50 +512,44 @@ selectedRadioTile = val;
           borderRadius: BorderRadius.circular(9),
         ),
         child: Form(
-           key:spacekey,
-        child: Center(
-          child: TextFormField(
-               onChanged: (value) {
-              setState(() {
-                 textfieldsStrings2[2]= value;
-              });
-
-              
-            },
-
-                validator: (value) {
-                         if (value!.isEmpty) {
-                            buildSnackError(
-                              'Required'.tr(),
-                              context,
-                              size,
-                            );
-                            return '';
-                          }
-                          return null;
-                      },
-            
-               decoration: InputDecoration(
-               contentPadding: const EdgeInsets.all(6),
-              hintText: 'Total Space'.tr(),
-              hintStyle:pText1,
+          key: spacekey,
+          child: Center(
+            child: TextFormField(
+              onChanged: (value) {
+                setState(() {
+                  textfieldsStrings2[2] = value;
+                });
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  buildSnackError(
+                    'Required'.tr(),
+                    context,
+                    size,
+                  );
+                  return '';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(6),
+                hintText: 'Total Space'.tr(),
+                hintStyle: pText1,
+              ),
+              style: pText1,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.next,
             ),
-             
-            style: pText1,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.next,
           ),
         ),
       ),
-      ),
     );
-}
+  }
 
-
- Widget addTextField(){
-  Size size = MediaQuery.of(context).size;
+  Widget addTextField() {
+    Size size = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical:6.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Container(
         height: size.height * 0.05,
         width: size.width * 0.8,
@@ -552,49 +558,44 @@ selectedRadioTile = val;
           borderRadius: BorderRadius.circular(9),
         ),
         child: Form(
-           key:addkey,
-        child: Center(
-          child: TextFormField(
-               onChanged: (value) {
-              setState(() {
-                 textfieldsStrings2[6]= value;
-              });
-
-              
-            },
-
-                validator: (value) {
-                         if (value!.isEmpty) {
-                            buildSnackError(
-                              'Required'.tr(),
-                              context,
-                              size,
-                            );
-                            return '';
-                          }
-                          return null;
-                      },
-            
-               decoration: InputDecoration(
-               contentPadding: const EdgeInsets.all(6),
-              hintText: 'Address'.tr(),
-              hintStyle:pText1,
+          key: addkey,
+          child: Center(
+            child: TextFormField(
+              onChanged: (value) {
+                setState(() {
+                  textfieldsStrings2[6] = value;
+                });
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  buildSnackError(
+                    'Required'.tr(),
+                    context,
+                    size,
+                  );
+                  return '';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(6),
+                hintText: 'Address'.tr(),
+                hintStyle: pText1,
+              ),
+              style: pText1,
+              keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.next,
             ),
-             
-            style: pText1,
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.next,
           ),
         ),
       ),
-      ),
     );
-}
+  }
 
- Widget mapTextField(){
-  Size size = MediaQuery.of(context).size;
+  Widget mapTextField() {
+    Size size = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical:8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         height: size.height * 0.05,
         width: size.width * 0.8,
@@ -602,51 +603,29 @@ selectedRadioTile = val;
           color: Colors.grey[300]!.withOpacity(0.5),
           borderRadius: BorderRadius.circular(9),
         ),
-        child: Form(
-           key:mapkey,
-        child: Center(
-          child: TextFormField(
-               onChanged: (value) {
-              setState(() {
-                 textfieldsStrings2[7]= value;
-              });
-
-              
-            },
-
-                validator: (value) {
-                         if (value!.isEmpty) {
-                            buildSnackError(
-                              'Required'.tr(),
-                              context,
-                              size,
-                            );
-                            return '';
-                          }
-                          return null;
-                      },
-            
-               decoration: InputDecoration(
-               contentPadding: const EdgeInsets.all(6),
-              hintText: 'Location on map'.tr(),
-              hintStyle:pText1,
-            ),
-             
+        child: TextButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => MyMapp(
+                          firstlist: [widget.firstlist[0]],
+                          num: [num[0]],
+                        )));
+          },
+          child: Text(
+            'Location on map'.tr(),
             style: pText1,
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.next,
           ),
         ),
       ),
-      ),
     );
-}
+  }
 
-Widget roundedButton(){
-  Size size = MediaQuery.of(context).size;
-  
+  Widget roundedButton() {
+    Size size = MediaQuery.of(context).size;
+
     return Container(
-     
       height: size.height * 0.08,
       width: size.width * 0.7,
       decoration: BoxDecoration(
@@ -655,65 +634,43 @@ Widget roundedButton(){
       ),
       child: TextButton(
         onPressed: () async {
-      
-           if(pricekey.currentState!.validate()){
-                       
-                           if (spacekey.currentState!.validate()){
-                            if(addkey.currentState!.validate()){
-                               if(mapkey.currentState!.validate()){
-
-
-// await createUser();
-//      // ignore: use_build_context_synchronously
-//      buildSnackError(
-//                                 res,
-//                                 context,
-//                                 size,
-//                               );
-                              
-   
-//    if(res != "email already exist"){
-//     // ignore: use_build_context_synchronously
-//     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                           builder: (_) => LoginScreen(
-//                                firstlist: [
-//                                   textfieldsStrings2[0],
-//                                   textfieldsStrings2[1],
-//                                   textfieldsStrings2[2],
-//                                    textfieldsStrings2[3],
-//                                     textfieldsStrings2[4],
-                                
-//                                 ],
-//                               )));}                 
-   
-  
-                          
-                              
-                            }
-    }
-    }
-
-    
-    }
-    
+          if (namekey.currentState!.validate()) {
+            if (pricekey.currentState!.validate()) {
+              if (spacekey.currentState!.validate()) {
+                if (roomkey.currentState!.validate()) {
+                  if (hallkey.currentState!.validate()) {
+                    if (floorkey.currentState!.validate()) {
+                      if (addkey.currentState!.validate()) {
+                        _save().whenComplete(
+                          () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => MyReal(
+                                        firstlist: [widget.firstlist[0]],
+                                      ))),
+                        );
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
-        
         child: Text(
-          'Add'.tr(),
+          'Add post'.tr(),
           style: kBodyText.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
- ScaffoldFeatureController<SnackBar, SnackBarClosedReason> buildSnackError(
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> buildSnackError(
       String error, context, size) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 3),
-        backgroundColor:primaryColor,
+        backgroundColor: Colors.grey[500],
         content: SizedBox(
           height: size.height * 0.03,
           child: Center(
@@ -728,6 +685,4 @@ Widget roundedButton(){
       ),
     );
   }
-   
 }
-

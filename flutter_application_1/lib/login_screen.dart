@@ -52,6 +52,7 @@ var result = await httpGet("userlog", {
 
 }
 else{    
+
   debugPrint(result.data);
                 Navigator.push(
                       context,
@@ -99,6 +100,7 @@ else{
                 color: kWhite,
               ),
             ),
+            
           
             centerTitle: true,
           ),

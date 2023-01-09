@@ -1,21 +1,127 @@
+import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../pallete.dart';
 import '../widgets/background-image.dart';
-import '../widgets/rounded-button.dart';
-import '../widgets/text-field-input.dart';
+import 'package:http/http.dart' as http;
+// import 'package:mailer/mailer.dart';
+// import 'package:mailer/smtp_server.dart';
 
-// ignore: use_key_in_widget_constructors
 class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({super.key});
+
   @override
   State<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
-    final GlobalKey<FormState>emailKey=GlobalKey();
-    String email ='';
+  
+    String email = '';
+    String verifyLink = '';
+    bool verifyButton = false;
+    String newPass = '';
+    Future checkUser()async{
+      
+      var response = await http.post(Uri.parse("http://192.168.1.104/gradpro/check.php")
+      ,
+      body: {
+        "myEmail" : email,
+      }
+      );
+      var link = json.decode(response.body);
+      if(link == "Invalid User"){
+       Fluttertoast.showToast(
+        msg: 'There is no account for this user',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor:  Colors.grey[500],
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+       
+      }else{
+        setState(() {
+          verifyLink=link;
+          verifyButton=true;
+        });
+      
+             Fluttertoast.showToast(
+        msg: 'Click Verify Button To Rset Password ',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.grey[500],
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+
+      }
+      // print(link);
+
+    }
+
+
+    Future resetPassword() async{
+      var response = await http.post(Uri.parse(verifyLink));
+     String responseapi = response.body.toString().replaceAll("\n","");
+    var link = json.decode(responseapi);
+
+      
+       setState(() {
+          newPass=link;
+       });
+      //  print(link);
+      
+       Fluttertoast.showToast(
+        msg: 'Your password has been reset :$newPass',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.grey[500],
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+
+    }
+
+  // sendMail() async {
+  //   String username = EMAIL;
+  //   String password = PASS;
+
+  //   final smtpServer = gmail(username, password);
+  //   // Creating the Gmail server
+
+  //   // Create our email message.
+  //   final message = Message()
+  //     ..from = Address(username)
+  //     ..recipients.add('abc@gmail.com') //recipent email
+  //     //..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com']) //cc Recipents emails
+  //     //..bccRecipients.add(Address('bccAddress@example.com')) //bcc Recipents emails
+  //     ..subject =
+  //         'Password recover link from shawondeveloper : ${DateTime.now()}' //subject of the email
+  //     //..text =
+  //     //'This is the plain text.\nThis is line 2 of the text part.'
+  //     ..html =
+  //         "<h3>Thanks for with localhost. Please click this link to reset your password</h3>\n<p> <a href='$verifylink'>Click me to reset</a></p>"; //body of the email
+
+  //   try {
+  //     final sendReport = await send(message, smtpServer);
+  //     print('Message sent: ' +
+  //         sendReport.toString()); //print if the email is sent
+  //   } on MailerException catch (e) {
+  //     print('Message not sent. \n' +
+  //         e.toString()); //print if the email is not sent
+  //     // e.toString() will show why the email is not sending
+  //   }
+  // }
+
+
+
+
+ 
     
   @override
   Widget build(BuildContext context) {
@@ -51,8 +157,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     SizedBox(
                       height: size.height * 0.1,
                     ),
-                    // ignore: sized_box_for_whitespace
-                    Container(
+                  
+                    SizedBox(
                       width: size.width * 0.8,
                       child:  Text(
                         'Enter your email we will send instruction to reset your password'.tr(),
@@ -62,16 +168,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     const SizedBox(
                       height: 20,
                     ),
-                     TextInputField(
-                      icon: FontAwesomeIcons.envelope,
-                      hint: 'Email'.tr(),
-                      inputType: TextInputType.emailAddress,
-                      inputAction: TextInputAction.done,
-                    ),
+                
+                    emailTextField(),
                     const SizedBox(
                       height: 20,
                     ),
-                    RoundedButton(buttonName: 'Send'.tr())
+                    // roundedButton(),
+                    // const SizedBox(
+                    //   height: 20,
+                    // ),
+                    verifyButton? roundedButton1():roundedButton(),
                   ],
                 ),
               )
@@ -94,40 +200,17 @@ Widget emailTextField(){
           borderRadius: BorderRadius.circular(16),
         ),
         child: Form(
-          key: emailKey,
         child: Center(
           child: TextFormField(
            
              onChanged: (value) {
               setState(() {
                 email= value;
+                
               });
                
             },
 
-              validator: (value) {
-            
-                            if (value!.length < 5) {
-                              buildSnackError(
-                                'Invalid email',
-                                context,
-                                size,
-                              );
-                              return '';
-                            }
-                           else if (!RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+.[a-zA-Z]+")
-                                .hasMatch(value)) {
-                              buildSnackError(
-                                'Invalid email',
-                                context,
-                                size,
-                              );
-                              return '';
-                            }
-
-                            return null;
-                      },
           
 
             decoration:  InputDecoration(
@@ -155,28 +238,54 @@ Widget emailTextField(){
     );
 }
 
-    ScaffoldFeatureController<SnackBar, SnackBarClosedReason> buildSnackError(
-      String error, context, size) {
-    return ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 3),
-        backgroundColor:Colors.grey[400]!.withOpacity(
-                              0.4,
-                            ),
-        content: SizedBox(
-          height: size.height * 0.03,
-          child: Center(
-            child: Text(error,
-                style: GoogleFonts.poppins(
-                  color: const Color.fromARGB(255, 218, 226, 238),
-                  fontSize: size.height * 0.02,
-                  fontWeight: FontWeight.w600,
-                )),
-          ),
+
+  Widget roundedButton(){
+  Size size = MediaQuery.of(context).size;
+    return Container(
+      height: size.height * 0.08,
+      width: size.width * 0.8,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: kBlue,
+      ),
+      child: TextButton(
+        onPressed: () {
+         
+        checkUser();
+        },
+        
+        child: Text(
+          'Send'.tr(),
+          style: kBodyText.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
+
+   Widget roundedButton1(){
+  Size size = MediaQuery.of(context).size;
+    return Container(
+      height: size.height * 0.08,
+      width: size.width * 0.8,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: kBlue,
+      ),
+      child: TextButton(
+        onPressed: () {
+         resetPassword();
+      
+        },
+        
+        child: Text(
+          'Verify'.tr(),
+          style: kBodyText.copyWith(fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+
 
 
 }
